@@ -1,0 +1,11 @@
+FROM apache/airflow
+
+ARG LIMINAL_VERSION='apache-liminal'
+ARG DAG_FOLDER='/opt/airflow/dags/'
+ADD scripts/* ${DAG_FOLDER}
+ADD liminal/runners/airflow/dag/liminal_dags.py ${DAG_FOLDER}
+
+RUN pip install -r /opt/airflow/dags/requirements-airflow.txt --user
+RUN pip install --user --no-deps ${LIMINAL_VERSION}
+
+
