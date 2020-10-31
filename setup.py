@@ -30,7 +30,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="apache-liminal",
-    version=os.environ["LIMINAL_BUILD_VERSION"],
+    version=os.environ.get("LIMINAL_BUILD_VERSION", os.environ.get('LIMINAL_VERSION', None)),
     author="dev@liminal.apache.org",
     description="A package for authoring and deploying machine learning workflows",
     long_description=long_description,

@@ -65,9 +65,19 @@ def deploy_liminal_core_internal(clean):
     os.makedirs(environment.get_dags_dir(), exist_ok=True)
     dag_target_file = os.path.join(environment.get_liminal_home(), 'liminal_dags.py')
     shutil.copyfile(dags_path, dag_target_file)
+    #initialize the env. variable which indicates to the docke compose which liminal to install in airflow docker
+    liminal_version = environment.get_liminal_version()
+    # if liminal is installed from local file - teh developer needs to put it in the /scipts folder, in which case
+    # it will end up inside the container during build
+    if liminal_version.find("file://")>-1:
+        local_file_name = os.path.basename(liminal_version)
+        full_path = os.path.join('/opt/airflow/dags',local_file_name)
+        print(f'Liminal was installed locally, changing the LIMINAL_VERSION parameter to {full_path}')
+        os.environ[environment.LIMINAL_VERSION_PARAM_NAME]= full_path
     if clean:
-        docker_compose_command('build', ['no-cache'])
-        docker_compose_command('run',['webserver','initdb'])
+        docker_compose_command('down', ['--rmi', 'local'])
+        docker_compose_command('build', ['--no-cache'])
+        docker_compose_command('run', ['webserver','initdb'])
 
 
 def docker_compose_command(command_name, args):
