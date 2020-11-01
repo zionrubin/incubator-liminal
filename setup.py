@@ -47,10 +47,4 @@ setuptools.setup(
     install_requires=requirements,
     scripts=['scripts/liminal'],
     include_package_data=True)
-"""
-data_files=[('liminal-resources', ['scripts/docker-compose.yml',
-                                   'scripts/Dockerfile-liminal',
-                                   'requirements-airflow.txt',
-                                   'liminal/runners/airflow/dag/liminal_dags.py'])]
-"""
 

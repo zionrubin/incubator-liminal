@@ -101,6 +101,7 @@ services:
 ```bash
    pip install liminal
 ```
+
 2. Optional: set LIMINAL_HOME to path of your choice (if not set, will default to ~/liminal_home)
 ```bash
 echo 'export LIMINAL_HOME=</path/to/some/folder>' >> ~/.bash_profile && source ~/.bash_profile
@@ -152,6 +153,12 @@ You'll see that a number of outputs indicating various docker images built.
 cd </path/to/your/liminal/code> 
 liminal deploy
 ```
+Note: after upgrading liminal, it's recommended to issue the command 
+```bash
+liminal deploy --clean
+``` 
+
+This will rebuild the airlfow docker containers from scratch with a fresh version of liminal, ensuring consistency.
 
 4. Start the server
 ```bash

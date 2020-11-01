@@ -61,7 +61,7 @@ via [Official Apache Download sources](https://downloads.apache.org/)
 Following source releases Apache Liminal release manager also distributes convenience packages:
 
 * PyPI packages released via https://pypi.org/project/apache-liminal/
-* Docker Images released via https://hub.docker.com/repository/docker/apache/liminal
+* Docker Images released via https://hub.docker.com/repository/docker/apache/liminal (coming soon...)
 
 Those convenience packages are not "official releases" of Apache Liminal, but the users who
 cannot or do not want to build the packages themselves can use them as a convenient way of installing
@@ -79,6 +79,53 @@ pre-requisites are listed below. Note that release manager does not have to be a
 to be committer to assume the release manager role, but there are final steps in the process (uploading
 final releases to SVN) that can only be done by PMC member. If needed, the release manager
 can ask PMC to perform that final step of release.
+
+## Testing the release locally
+
+- Build a local version of liminal:
+```bash
+# Set Version
+export LIMINAL_BUILD_VERSION=0.0.1RC1
+python setup.py sdist bdist_wheel
+```
+
+- Start a test project with a liminal .yml file in it
+
+- Clear folder $LIMINAL_HOME
+
+- Install liminal in the test project
+
+```bash
+pip install <path to lminal .whl created by setup.py>
+liminal build
+liminal deploy --clean
+liminal start
+```
+
+Note:
+When you run liminal deploy, a liminal installs itself inside airflow container.
+You can control which version of liminal gets installed inside docker using LIMINAL_VERSION environment variable.
+
+This can be any string which results in a legal call to:
+```bash
+pip install ${LIMINAL_VERSION}
+```
+
+This includes 
+- A standard pip version like apache-liminal==0.0.1dev1 avail from pypi
+- A URL for git e.g. git+https://github.com/apache/incubator-liminal.git
+- A string indicating where to get the package from like --index <url> apache-liminal==xyz
+- A local path to a .whl which is available inside the docker (e.g. which you placed
+in the scripts/ folder)
+
+This is useful if you are making changes in liminal locally and want to test them.
+
+If you don't specify this variable, liminal attempts to discover how to install itself
+by running a pip freeze and looking at the result. 
+This covers pip repositories, files and installtion from URL.
+
+The fallback in case no string is found, is simply 'apache-liminal' assuming your .pypirc contains an 
+index which has this package.
 
 ## Upload Public keys to id.apache.org
 
@@ -154,9 +201,6 @@ pip install twine
 - Set proper permissions for the pypirc file:
 `$ chmod 600 ~/.pypirc`
 
-- Confirm that `liminal/version.py` is set properly.
-
-
 ## Hardware used to prepare and verify the packages
 
 The best way to prepare and verify the releases is to prepare them on a hardware owned and controlled
@@ -175,32 +219,32 @@ The Release Candidate artifacts we vote upon should be the exact ones we vote ag
 
 - Set environment variables
 
-    ```shell script
-    # Set Version
-    export LIMINAL_BUILD_VERSION=1.10.2rc3
+```bash
+# Set Version
+export LIMINAL_BUILD_VERSION=0.0.1RC1
 
-    # Example after cloning
-    git clone https://github.com/apache/incubating-liminal.git liminal
-    cd liminal
-    ```
+# Example after cloning
+git clone https://github.com/apache/incubating-liminal.git 
+cd incubating-liminal
+```
   
 - Tag your release
 
-    ```shell script
-    git tag -s ${LIMINAL_BUILD_VERSION}
-    ```
+```bash
+git tag -s ${LIMINAL_BUILD_VERSION}
+```
 
 - Clean the checkout: the sdist step below will
 
-    ```shell script
-    git clean -fxd
-    ```
+```bash
+git clean -fxd
+```
 
 - Tarball the repo
 
-    ```shell script
-    git archive --format=tar.gz ${LIMINAL_BUILD_VERSION} --prefix=apache-liminal-${LIMINAL_BUILD_VERSION}/ -o apache-liminal-${LIMINAL_BUILD_VERSION}-source.tar.gz`
-    ```
+```bash
+git archive --format=tar.gz ${LIMINAL_BUILD_VERSION} --prefix=apache-liminal-${LIMINAL_BUILD_VERSION}/ -o apache-liminal-${LIMINAL_BUILD_VERSION}-source.tar.gz`
+```
 
 
 - Generate sdist
@@ -208,22 +252,22 @@ The Release Candidate artifacts we vote upon should be the exact ones we vote ag
     NOTE: Make sure your checkout is clean at this stage - any untracked or changed files will otherwise be included
      in the file produced.
 
-    ```shell script
-    python setup.py sdist bdist_wheel
-    ```
+```bash
+python setup.py sdist bdist_wheel
+```
 
 - Generate SHA512/ASC (If you have not generated a key yet, generate it by following instructions on http://www.apache.org/dev/openpgp.html#key-gen-generate-key)
 
-    ```shell script
-    dev/sign.sh apache-liminal-${LIMINAL_BUILD_VERSION}.tar.gz
-    dev/sign.sh apache_liminal-${LIMINAL_BUILD_VERSION}-py3-none-any.whl
-    ```
+```bash
+dev/sign.sh apache-liminal-${LIMINAL_BUILD_VERSION}.tar.gz
+dev/sign.sh apache_liminal-${LIMINAL_BUILD_VERSION}-py3-none-any.whl
+```
 
 - Push Tags
 
-    ```shell script
-    git push origin ${LIMINAL_BUILD_VERSION}
-    ```
+```bashs
+git push origin ${LIMINAL_BUILD_VERSION}
+```
 
 - Push the artifacts to ASF dev dist repo
 ```
@@ -248,15 +292,15 @@ publish "snapshots" of the RC builds to pypi for installing via pip. To do this 
 
 - Verify the artifacts that would be uploaded:
 
-    ```shell script
-    twine check dist/*
-    ```
+```bash
+twine check dist/*
+```
 
 - Upload the package to PyPi's test environment:
 
-    ```shell script
-    twine upload -r pypitest dist/*
-    ```
+```bash
+twine upload -r pypitest dist/*
+```
 
 - Verify that the test package looks good by downloading it and installing it into a virtual environment. The package download link is available at:
 https://test.pypi.org/project/apache-liminal/#files
@@ -357,7 +401,7 @@ The legal checks include:
 #### SVN check
 
 The files should be present in the sub-folder of
-[Liminal dist](https://dist.apache.org/repos/dist/dev/liminal/)
+[Liminal dist](https://dist.apache.org/repos/dist/dev/incubator/liminal/)
 
 The following files should be present (9 files):
 
@@ -367,7 +411,7 @@ The following files should be present (9 files):
 As a PMC you should be able to clone the SVN repository:
 
 ```shell script
-svn co https://dist.apache.org/repos/dist/dev/liminal
+    svn co https://dist.apache.org/repos/dist/dev/incubator/liminal
 ```
 
 Or update it if you already checked it out:

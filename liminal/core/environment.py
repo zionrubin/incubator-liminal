@@ -18,6 +18,7 @@
 
 import os
 import subprocess
+from pathlib import Path
 
 DEFAULT_DAGS_ZIP_NAME = 'liminal.zip'
 DEFAULT_LIMINAL_HOME = os.path.expanduser('~/liminal_home')
@@ -55,3 +56,4 @@ def get_liminal_version():
         print(f'LIMINAL_VERSION not set. Setting it to currently installed version: {value}')
         os.environ[LIMINAL_VERSION_PARAM_NAME] = value
     return os.environ.get(LIMINAL_VERSION_PARAM_NAME, 'apache-liminal')
+
