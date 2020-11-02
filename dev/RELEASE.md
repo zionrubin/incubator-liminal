@@ -140,7 +140,7 @@ with your pgp key. After you have created a key, make sure you:
 gpg --gen-key
 
 # Checkout ASF dist repo
-svn checkout https://dist.apache.org/repos/dist/release/liminal
+svn checkout https://dist.apache.org/repos/dist/release/incubator/liminal
 cd liminal
 
 
