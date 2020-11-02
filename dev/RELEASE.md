@@ -19,9 +19,12 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Apache Liminal source releases](#apache-liminal-source-releases)
   - [Apache Liminal Package](#apache-liminal-package)
 - [Prerequisites for the release manager preparing the release](#prerequisites-for-the-release-manager-preparing-the-release)
+  - [version IDs](#version-ids)
+  - [Testing the release locally](#testing-the-release-locally)
   - [Upload Public keys to id.apache.org](#upload-public-keys-to-idapacheorg)
   - [Configure PyPI uploads](#configure-pypi-uploads)
   - [Hardware used to prepare and verify the packages](#hardware-used-to-prepare-and-verify-the-packages)
@@ -79,6 +82,10 @@ pre-requisites are listed below. Note that release manager does not have to be a
 to be committer to assume the release manager role, but there are final steps in the process (uploading
 final releases to SVN) that can only be done by PMC member. If needed, the release manager
 can ask PMC to perform that final step of release.
+
+## version IDs
+
+Should follow https://www.python.org/dev/peps/pep-0440/
 
 ## Testing the release locally
 
@@ -231,7 +238,8 @@ cd incubating-liminal
 - Tag your release
 
 ```bash
-git tag -s ${LIMINAL_BUILD_VERSION}
+git tag -a ${LIMINAL_BUILD_VERSION} -m "some message"
+
 ```
 
 - Clean the checkout: the sdist step below will
@@ -259,8 +267,9 @@ python setup.py sdist bdist_wheel
 - Generate SHA512/ASC (If you have not generated a key yet, generate it by following instructions on http://www.apache.org/dev/openpgp.html#key-gen-generate-key)
 
 ```bash
-dev/sign.sh apache-liminal-${LIMINAL_BUILD_VERSION}.tar.gz
-dev/sign.sh apache_liminal-${LIMINAL_BUILD_VERSION}-py3-none-any.whl
+dev/sign.sh apache-liminal-${LIMINAL_BUILD_VERSION}-source.tar.gz
+dev/sign.sh dist/apache-liminal-${LIMINAL_BUILD_VERSION}.tar.gz
+dev/sign.sh dist/apache_liminal-${LIMINAL_BUILD_VERSION}-py3-none-any.whl
 ```
 
 - Push Tags

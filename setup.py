@@ -28,10 +28,12 @@ with open('requirements.txt') as f:
     requirements = f.read().splitlines()
     print(requirements)
 
+
 setuptools.setup(
     name="apache-liminal",
     version=os.environ.get("LIMINAL_BUILD_VERSION", os.environ.get('LIMINAL_VERSION', None)),
     author="dev@liminal.apache.org",
+    author_email='dev@liminal.apache.org',
     description="A package for authoring and deploying machine learning workflows",
     long_description=long_description,
     long_description_content_type="text/markdown",
