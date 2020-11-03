@@ -6,9 +6,11 @@
                 - POSTGRES_USER=airflow
                 - POSTGRES_PASSWORD=airflow
                 - POSTGRES_DB=
-
+            restart: always
             ports:
                 - "5432:5432"
+            volumes:
+                - ${LIMINAL_HOME}/db:/var/lib/postgresql/data
             logging:
                 options:
                     max-size: 10m
@@ -21,7 +23,6 @@
                 args:
                     LIMINAL_VERSION: ${LIMINAL_VERSION}
             image: liminal-airflow
-            restart: always
             depends_on:
                 - postgres
             environment:
@@ -40,6 +41,7 @@
                     max-file: "3"
             volumes:
                 - ${LIMINAL_HOME}:/opt/airflow/dags
+                - ${LIMINAL_HOME}/logs:/opt/airflow/logs
                 - ${HOME}/.kube:/home/airflow/kube
             ports:
                 - "8080:8080"
@@ -58,7 +60,6 @@
                 args:
                     LIMINAL_VERSION: ${LIMINAL_VERSION}
             image: liminal-airflow
-            restart: always
             depends_on:
                 - postgres
                 - webserver
@@ -79,6 +80,7 @@
                     max-file: "3"
             volumes:
                 - ${LIMINAL_HOME}:/opt/airflow/dags
+                - ${LIMINAL_HOME}/logs:/opt/airflow/logs
                 - ${HOME}/.kube:/home/airflow/kube
             ports:
                 - "8793:8793"

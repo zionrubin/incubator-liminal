@@ -67,7 +67,7 @@ def deploy_liminal_core_internal(clean):
     shutil.copyfile(dags_path, dag_target_file)
     #initialize the env. variable which indicates to the docke compose which liminal to install in airflow docker
     liminal_version = environment.get_liminal_version()
-    # if liminal is installed from local file - teh developer needs to put it in the /scipts folder, in which case
+    # if liminal is installed from local file - teh developer needs to put it in the /scripts folder, in which case
     # it will end up inside the container during build
     if liminal_version.find("file://")>-1:
         local_file_name = os.path.basename(liminal_version)
@@ -77,14 +77,15 @@ def deploy_liminal_core_internal(clean):
     if clean:
         docker_compose_command('down', ['--rmi', 'local'])
         docker_compose_command('build', ['--no-cache'])
+        docker_compose_command('run', ['webserver', 'resetdb', '-y'])
         docker_compose_command('run', ['webserver','initdb'])
-
+        docker_compose_command('down', [])
 
 def docker_compose_command(command_name, args):
     docker_compose_path, project_dir = get_docker_compose_paths()
     concated_args = ' '.join(args)
     subprocess.call(
-        [f'docker-compose -f "{docker_compose_path}" --project-directory {project_dir} {command_name} {concated_args}'],
+        [f'docker-compose -f "{docker_compose_path}" -p liminal --project-directory {project_dir} {command_name} {concated_args}'],
         env=os.environ, shell=True)
 
 @cli.command("deploy", short_help="deploys your liminal.yaml files to $LIMINAL_HOME folder")

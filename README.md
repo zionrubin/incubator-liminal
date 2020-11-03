@@ -125,6 +125,8 @@ When your pipeline code is ready, you can test it by running it locally on your 
 1. Ensure you have The Docker engine running locally, and enable a local Kubernetes cluster:
 ![Kubernetes configured](https://raw.githubusercontent.com/apache/incubator-liminal/master/images/k8s_running.png)
 
+And allocate it at least 3 CPUs (under "Resources" in the Docker preference UI).
+
 If you want to execute your pipeline on a remote kubernetes cluster, make sure the cluster is configured
 using :
 ```bash
