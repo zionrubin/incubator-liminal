@@ -24,7 +24,8 @@ executors:
   - executor: k8s
     type: kubernetes
 variables:
-  spark_output_path: /mnt/gettingstartedvol
+  output_root_dir: /mnt/gettingstartedvol
+  input_root_dir: ''
 task_defaults:
   spark:
     executor: k8s

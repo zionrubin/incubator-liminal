@@ -39,12 +39,7 @@ class SparkImageBuilder(BasePythonImageBuilder):
 
     @staticmethod
     def __add_pip_install(data):
-
-        if "" in data:
-            new_data = data
-            new_data = new_data.replace('{{INSTALL_COMMANDS}}',
-                                        'RUN {{mount}} pip install -r requirements.txt\n')
-        else:
-            new_data = data.replace('{{INSTALL_COMMANDS}}', '')
-
+        new_data = data
+        new_data = new_data.replace('{{INSTALL_COMMANDS}}',
+                                    'RUN {{mount}} pip install -r requirements.txt\n')
         return new_data

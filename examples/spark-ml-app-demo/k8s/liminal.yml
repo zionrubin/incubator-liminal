@@ -20,7 +20,7 @@ name: MyFirstLiminalSparkApp
 super: InfraSpark
 owner: Bosco Albert Baracus
 variables:
-  dataset_path: '{{spark_output_path}}/outputs/'
+  dataset_path: '{{output_root_dir}}/my_first_liminal_spark_app_outputs/'
   application: data_cleanup.py
 volumes:
   - volume: gettingstartedvol
@@ -57,7 +57,7 @@ pipelines:
         type: spark
         description: prepare the data for training
         application_arguments:
-          - 'data/iris.csv'
+          - '{{input_root_dir}}data/iris.csv'
           - '{{dataset_path}}'
       - task: train
         type: python

@@ -232,6 +232,4 @@ class TestSparkTask(TestCase):
             task_config=task_config
         ).get_runnable_command()
 
-        print(actual)
-
         self.assertEqual(actual.sort(), expected.sort())

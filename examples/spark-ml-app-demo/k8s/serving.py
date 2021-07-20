@@ -15,6 +15,7 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
+
 import json
 
 import model_store
@@ -25,13 +26,28 @@ _PETAL_WIDTH = 'petal_width'
 
 
 def predict(input_json):
-    print(f'input_json={input_json}')
-    input_dict = json.loads(input_json)
-    model, version = _MODEL_STORE.load_latest_model()
-    result = str(model.predict_proba([[float(input_dict[_PETAL_WIDTH])]])[0][1])
-    print(f'result={result}')
-    return result
+    try:
+        input_dict = json.loads(input_json)
+        model, version = _MODEL_STORE.load_latest_model()
+        result = str(model.predict_proba([[float(input_dict[_PETAL_WIDTH])]])[0][1])
+        return json.dumps({"result": result, "version": version})
+
+    except IndexError:
+        return 'Failure: the model is not ready yet'
+
+    except Exception as e:
+        print(e)
+        return 'Failure'
 
 
 def healthcheck(self):
     return 'Server is up!'
+
+
+def version(self):
+    try:
+        model, version = _MODEL_STORE.load_latest_model()
+        print(f'version={version}')
+        return version
+    except Exception as e:
+        return e
