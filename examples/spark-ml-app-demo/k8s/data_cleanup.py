@@ -15,31 +15,25 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
----
-name: base
-type: super
-executors:
-  - executor: default_k8s
-    type: kubernetes
-  - executor: airflow_executor
-    type: airflow
-service_defaults:
-  description: add defaults parameters for all services
-task_defaults:
-  description: add defaults parameters for all tasks separate by task type
-  python:
-    executor: default_k8s
-  spark:
-    executor: default_k8s
-  job_end:
-    executor: airflow_executor
-  job_start:
-    executor: airflow_executor
-pipeline_defaults:
-  description: add defaults parameters for all pipelines
-  before_tasks:
-    - task: start
-      type: job_start
-  after_tasks:
-    - task: end
-      type: job_end
+
+import sys
+
+from pyspark.sql import SparkSession
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: source <file> destination <dest>", file=sys.stderr)
+        sys.exit(-1)
+
+    spark = SparkSession \
+        .builder \
+        .appName("CleanData") \
+        .getOrCreate()
+
+    spark.read.text(sys.argv[1]).rdd.filter(lambda x: not x[0].startswith('#')) \
+        .filter(lambda r: not r[0].startswith('ignore')) \
+        .map(lambda r: r[0]).map(
+        lambda r: (r.split(',')[0], r.split(',')[1], r.split(',')[2], r.split(',')[3])) \
+        .toDF().coalesce(1).write.mode("overwrite").option("header", "false").csv(sys.argv[2])
+
+    spark.stop()

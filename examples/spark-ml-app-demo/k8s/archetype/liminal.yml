@@ -16,30 +16,25 @@
 # specific language governing permissions and limitations
 # under the License.
 ---
-name: base
+# superliminal for local development
+name: InfraSpark
+owner: Bosco Albert Baracus
 type: super
 executors:
-  - executor: default_k8s
+  - executor: k8s
     type: kubernetes
-  - executor: airflow_executor
-    type: airflow
-service_defaults:
-  description: add defaults parameters for all services
+variables:
+  spark_output_path: /mnt/gettingstartedvol
 task_defaults:
-  description: add defaults parameters for all tasks separate by task type
-  python:
-    executor: default_k8s
   spark:
-    executor: default_k8s
-  job_end:
-    executor: airflow_executor
-  job_start:
-    executor: airflow_executor
-pipeline_defaults:
-  description: add defaults parameters for all pipelines
-  before_tasks:
-    - task: start
-      type: job_start
-  after_tasks:
-    - task: end
-      type: job_end
+    executor: k8s
+    image: my_spark_image
+    source: .
+    no_cache: True
+    executors: 2
+    application_source: '{{application}}'
+    mounts:
+      - mount: mymount
+        volume: gettingstartedvol
+        path: /mnt/gettingstartedvol
+

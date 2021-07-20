@@ -15,31 +15,23 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
----
-name: base
-type: super
-executors:
-  - executor: default_k8s
-    type: kubernetes
-  - executor: airflow_executor
-    type: airflow
-service_defaults:
-  description: add defaults parameters for all services
-task_defaults:
-  description: add defaults parameters for all tasks separate by task type
-  python:
-    executor: default_k8s
-  spark:
-    executor: default_k8s
-  job_end:
-    executor: airflow_executor
-  job_start:
-    executor: airflow_executor
-pipeline_defaults:
-  description: add defaults parameters for all pipelines
-  before_tasks:
-    - task: start
-      type: job_start
-  after_tasks:
-    - task: end
-      type: job_end
+import json
+
+import model_store
+from model_store import ModelStore
+
+_MODEL_STORE = ModelStore(model_store.PRODUCTION)
+_PETAL_WIDTH = 'petal_width'
+
+
+def predict(input_json):
+    print(f'input_json={input_json}')
+    input_dict = json.loads(input_json)
+    model, version = _MODEL_STORE.load_latest_model()
+    result = str(model.predict_proba([[float(input_dict[_PETAL_WIDTH])]])[0][1])
+    print(f'result={result}')
+    return result
+
+
+def healthcheck(self):
+    return 'Server is up!'
