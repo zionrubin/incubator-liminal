@@ -25,7 +25,8 @@ variables:
   emr_version: 'emr-6.2.0'
   template_url: 'https://s3.amazonaws.com/myorg/emr-template.yml'
   cluster_name: 'spark-ml-app-demo-liminal'
-  spark_output_path: 'myorg/'
+  output_root_dir: 's3://myorg'
+  input_root_dir: 's3://myorg/inputs/'
 executors:
   - executor: emr-executor
     cluster_name: '{{cluster_name}}'

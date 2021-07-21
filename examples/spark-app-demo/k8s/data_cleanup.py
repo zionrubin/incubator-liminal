@@ -33,7 +33,8 @@ if __name__ == "__main__":
     spark.read.text(sys.argv[1]).rdd.filter(lambda x: not x[0].startswith('#')) \
         .filter(lambda r: not r[0].startswith('ignore')) \
         .map(lambda r: r[0]).map(
-        lambda r: (r.split(',')[0], r.split(',')[1], r.split(',')[2], r.split(',')[3])) \
+        lambda r: (
+            r.split(',')[0], r.split(',')[1], r.split(',')[2], r.split(',')[3], r.split(',')[4])) \
         .toDF().coalesce(1).write.mode("overwrite").option("header", "false").csv(sys.argv[2])
 
     spark.stop()
